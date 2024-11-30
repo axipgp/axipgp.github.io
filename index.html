@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cryptotexter</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme">
+        <i class="fas fa-moon"></i>
+    </button>
+
+    <div class="container">
+        <h1>Cryptotexter</h1>
+
+        <div class="tab-buttons">
+            <button onclick="showTab('encryptTab')" class="active">
+                <i class="fas fa-lock"></i> Encrypt
+            </button>
+            <button onclick="showTab('decryptTab')">
+                <i class="fas fa-unlock"></i> Decrypt
+            </button>
+        </div>
+
+        <div id="encryptTab" class="tab-content active">
+            <h2>Encrypt Text</h2>
+            <textarea id="textToEncrypt" rows="5" placeholder="Enter text to encrypt" maxlength="10000"></textarea>
+
+            <input type="password" id="passwordEncrypt1" placeholder="Enter your password">
+            <div id="passwordStrength"></div>
+
+            <input type="password" id="passwordEncrypt2" placeholder="Confirm your password">
+
+            <div id="encryptError" class="error"></div>
+
+            <button onclick="encryptText()" class="btn">
+                <i class="fas fa-lock"></i> Encrypt
+            </button>
+
+            <textarea id="encryptionResult" rows="5" readonly placeholder="Encrypted result"></textarea>
+
+            <div class="btn-container">
+                <button onclick="copyToClipboard('encryptionResult')" class="btn">
+                    <i class="fas fa-copy"></i> Copy Encrypted Text
+                </button>
+                <button onclick="downloadText('encryptionResult', 'ENcryptotexter.txt')" class="btn">
+                    <i class="fas fa-download"></i> Download
+                </button>
+            </div>
+        </div>
+
+        <div id="decryptTab" class="tab-content">
+            <h2>Decrypt Text</h2>
+            <textarea id="textToDecrypt" rows="5" placeholder="Enter encrypted text" maxlength="20000"></textarea>
+
+            <input type="password" id="passwordDecrypt" placeholder="Enter your password">
+
+            <div id="decryptError" class="error"></div>
+
+            <button onclick="decryptText()" class="btn">
+                <i class="fas fa-unlock"></i> Decrypt
+            </button>
+
+            <textarea id="decryptionResult" rows="5" readonly placeholder="Decrypted result"></textarea>
+
+            <div class="btn-container">
+                <button onclick="copyToClipboard('decryptionResult')" class="btn">
+                    <i class="fas fa-copy"></i> Copy Decrypted Text
+                </button>
+                <button onclick="downloadText('decryptionResult', 'DEcryptotexter.txt')" class="btn">
+                    <i class="fas fa-download"></i> Download
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="audit.js"></script>
+
+    <!-- Footer with copyright and open-source license -->
+    <footer>
+        <div style="text-align: center; padding: 20px; font-size: 14px;">
+            <p>&copy; This project is licensed under the <a href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GNU</a>.
+            </p>
+            <p>
+                View the source code on <a href="https://github.com/yourusername/axidone" target="_blank">GitHub</a>.
+            </p>
+        </div>
+    </footer>
+</body>
+</html>
