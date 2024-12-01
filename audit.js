@@ -1,5 +1,5 @@
-const ITERATIONS = 1000000; 
-const MAX_PASSWORD_ATTEMPTS = 5; 
+const ITERATIONS = 1000000;
+const MAX_PASSWORD_ATTEMPTS = 5;
 const ATTEMPT_RESET_TIMEOUT = 5 * 60 * 1000;
 
 let passwordAttempts = parseInt(sessionStorage.getItem('passwordAttempts')) || 0;
@@ -37,88 +37,53 @@ function renderPasswordStrength(password) {
     }
 }
 
-// Key Derivation with Enhanced Security
-async function deriveKey(password, salt = null) {
-    if (!salt) {
-        salt = crypto.getRandomValues(new Uint8Array(32)); // Generate a new salt if not provided
-    }
-
-    const keyMaterial = await crypto.subtle.importKey(
-        "raw",
-        new TextEncoder().encode(password),
-        "PBKDF2",
-        false,
-        ["deriveBits", "deriveKey"]
-    );
-
-    const key = await crypto.subtle.deriveKey(
-        {
-            name: "PBKDF2",
-            salt: salt,
-            iterations: ITERATIONS,
-            hash: "SHA-512" // Using SHA-512 for more security
-        },
-        keyMaterial,
-        { name: "AES-GCM", length: 256 }, // Use AES-GCM with 256-bit key for encryption
-        false,
-        ["encrypt", "decrypt"]
-    );
-
-    return { key, salt };
-}
-
-// Encryption Function with AES-GCM
+// Шифрование текста
 async function encryptText() {
     const text = document.getElementById('textToEncrypt').value;
     const password1 = document.getElementById('passwordEncrypt1').value;
     const password2 = document.getElementById('passwordEncrypt2').value;
     const errorEl = document.getElementById('encryptError');
 
-    // Reset error message
+    // Очистить сообщение об ошибке
     errorEl.textContent = '';
 
-    // Validation
+    // Проверка на пустые поля
     if (!text || !password1 || !password2) {
         errorEl.textContent = "Please fill in all fields.";
         return;
     }
 
+    // Проверка на совпадение паролей
     if (password1 !== password2) {
         errorEl.textContent = "Passwords do not match!";
         return;
     }
 
-    const { key, salt } = await deriveKey(password1);
+    try {
+        // Шифруем текст с использованием пароля (без хеширования)
+        const encrypted = await openpgp.encrypt({
+            message: await openpgp.createMessage({ text: text }),
+            passwords: [password1], // Используем сам пароль для шифрования
+            format: 'armored'
+        });
 
-    const encodedText = new TextEncoder().encode(text);
-    const iv = crypto.getRandomValues(new Uint8Array(12)); // Generate a new IV (Initialization Vector)
-
-    const encryptedData = await crypto.subtle.encrypt(
-        { name: "AES-GCM", iv },
-        key,
-        encodedText
-    );
-
-    // Combine salt, IV, and encrypted data into one array
-    const combined = new Uint8Array(salt.byteLength + iv.byteLength + encryptedData.byteLength);
-    combined.set(salt);
-    combined.set(iv, salt.byteLength);
-    combined.set(new Uint8Array(encryptedData), salt.byteLength + iv.byteLength);
-
-    // Output the encrypted result (Base64-encoded for easy storage or transmission)
-    document.getElementById('encryptionResult').value = btoa(String.fromCharCode(...combined));
+        document.getElementById('encryptionResult').value = encrypted;
+    } catch (error) {
+        errorEl.textContent = "Encryption failed. Please try again.";
+        console.error(error);
+    }
 }
 
-// Decryption Function with AES-GCM
+// Расшифровка текста
 async function decryptText() {
     const encryptedText = document.getElementById('textToDecrypt').value;
     const password = document.getElementById('passwordDecrypt').value;
     const errorEl = document.getElementById('decryptError');
 
-    // Reset error message
+    // Очистить сообщение об ошибке
     errorEl.textContent = '';
 
-    // Increment password attempts and check if exceeded the max allowed attempts
+    // Увеличиваем количество попыток ввода пароля и проверяем, не превышено ли максимальное количество
     passwordAttempts++;
     sessionStorage.setItem('passwordAttempts', passwordAttempts);
     sessionStorage.setItem('lastAttemptTime', Date.now());
@@ -133,48 +98,40 @@ async function decryptText() {
         return;
     }
 
-    // Decode the encrypted text (Base64 to Uint8Array)
-    const encryptedData = new Uint8Array(atob(encryptedText).split('').map(char => char.charCodeAt(0)));
-    const salt = encryptedData.slice(0, 32); // Extract the salt
-    const iv = encryptedData.slice(32, 44); // Extract the IV
-    const data = encryptedData.slice(44); // The actual encrypted data
-
     try {
-        const { key } = await deriveKey(password, salt); // Derive the key using the salt
+        // Расшифровываем текст с использованием пароля (без хеширования)
+        const { data: decrypted } = await openpgp.decrypt({
+            message: await openpgp.readMessage({ armoredMessage: encryptedText }),
+            passwords: [password] // Используем сам пароль для расшифровки
+        });
 
-        const decryptedData = await crypto.subtle.decrypt(
-            { name: "AES-GCM", iv },
-            key,
-            data
-        );
-
-        // Clear password and decrypted data immediately after use
+        // Очистить пароли и расшифрованные данные сразу после использования
         clearSensitiveData();
 
-        // Reset password attempts on successful decryption
+        // Сбросить количество попыток пароля при успешной расшифровке
         passwordAttempts = 0;
         sessionStorage.setItem('passwordAttempts', passwordAttempts);
-        document.getElementById('decryptionResult').value = new TextDecoder().decode(decryptedData); // Output the decrypted result
+        document.getElementById('decryptionResult').value = decrypted; // Выводим расшифрованный результат
     } catch (error) {
         errorEl.textContent = "Decryption failed. Please try again.";
         console.error(error);
     }
 }
 
-// Function to clear sensitive data (passwords and decrypted text) from memory
+// Функция очистки чувствительных данных (паролей и расшифрованного текста) из памяти
 function clearSensitiveData() {
-    document.getElementById('passwordDecrypt').value = ''; // Clear the password input field
-    document.getElementById('textToDecrypt').value = ''; // Clear the encrypted text input field
-    document.getElementById('decryptionResult').value = ''; // Clear the decrypted text output field
+    document.getElementById('passwordDecrypt').value = ''; // Очистить поле ввода пароля
+    document.getElementById('textToDecrypt').value = ''; // Очистить поле ввода зашифрованного текста
+    document.getElementById('decryptionResult').value = ''; // Очистить поле вывода расшифрованного текста
 
-    // Ensure no sensitive data is stored in memory
+    // Убедиться, что чувствительные данные не остаются в памяти
     if (window.crypto && window.crypto.subtle) {
-        // Explicitly overwrite the memory for sensitive fields to remove data
-        window.crypto.getRandomValues(new Uint8Array(1)); // Force a re-randomization to clear memory
+        // Явным образом переписываем память для чувствительных полей, чтобы удалить данные
+        window.crypto.getRandomValues(new Uint8Array(1)); // Принудительная переработка данных для очистки памяти
     }
 }
 
-// Clipboard and Download Functions
+// Функции для работы с буфером обмена и загрузки данных
 async function copyToClipboard(elementId) {
     const textArea = document.getElementById(elementId);
     if (textArea.value) {
@@ -185,7 +142,7 @@ async function copyToClipboard(elementId) {
             alert("Failed to copy text.");
         }
 
-        // Auto-clear clipboard after 1 minute
+        // Автоматически очистить буфер обмена через 1 минуту
         setTimeout(() => {
             navigator.clipboard.writeText('');
         }, 60000);
@@ -207,7 +164,7 @@ function downloadText(elementId, filename) {
     }
 }
 
-// Tab and Theme Management
+// Управление вкладками и темой
 function showTab(tabId) {
     document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
     document.querySelectorAll('.tab-buttons button').forEach(btn => btn.classList.remove('active'));
@@ -216,17 +173,17 @@ function showTab(tabId) {
     document.querySelector(`button[onclick="showTab('${tabId}')"]`).classList.add('active');
 }
 
-// Password Strength Live Update
+// Реализация обновления силы пароля в реальном времени
 document.getElementById('passwordEncrypt1').addEventListener('input', (e) => {
     renderPasswordStrength(e.target.value);
 });
 
-// Ensure password fields are hidden
+// Убедиться, что поля пароля скрыты
 document.getElementById('passwordEncrypt1').setAttribute('type', 'password');
 document.getElementById('passwordEncrypt2').setAttribute('type', 'password');
 document.getElementById('passwordDecrypt').setAttribute('type', 'password');
 
-// Theme Toggle
+// Переключение темы
 const themeToggle = document.getElementById('themeToggle');
 const moonIcon = '<i class="fas fa-moon"></i>';
 const sunIcon = '<i class="fas fa-sun"></i>';
@@ -234,11 +191,11 @@ const sunIcon = '<i class="fas fa-sun"></i>';
 themeToggle.addEventListener('click', () => {
     document.body.classList.toggle('light-theme');
     themeToggle.innerHTML = document.body.classList.contains('light-theme') ? moonIcon : sunIcon;
-    // Save theme to localStorage
+    // Сохранить тему в localStorage
     localStorage.setItem("theme", document.body.classList.contains('light-theme') ? "light-theme" : "dark-theme");
 });
 
-// Initialize theme from localStorage
+// Инициализация темы из localStorage
 document.addEventListener('DOMContentLoaded', () => {
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) {
@@ -250,3 +207,4 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     showTab('encryptTab');
 });
+
