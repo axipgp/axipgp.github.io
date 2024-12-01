@@ -1,11 +1,214 @@
-const _0x89f3=["\x70\x61\x73\x73\x77\x6F\x72\x64\x41\x74\x74\x65\x6D\x70\x74\x73","\x67\x65\x74\x49\x74\x65\x6D","\x70\x61\x73\x73\x77\x6F\x72\x64\x44\x65\x63\x72\x79","\x65\x6D\x70\x74\x79","\x70\x61\x73\x73\x77\x6F\x72\x64\x53\x74\x72\x65\x6E\x67\x74\x68","\x76\x61\x6C\x75\x65","\x69\x6E\x6E\x65\x72\x48\x54\x4D\x4C","\x63\x6F\x6C\x6F\x72","\x62\x6F\x64\x79","\x70\x61\x73\x73\x77\x6F\x72\x64\x45\x6E\x63\x72\x79","\x72\x65\x73\x74\x50\x61\x73\x73\x77\x6F\x72\x64\x44\x65\x74\x65\x63\x74","\x6C\x65\x6E\x67\x74\x68","\x72\x65\x67\x65\x78","\x77\x72\x69\x74\x65\x54\x65\x78\x74","\x70\x61\x73\x73\x77\x6F\x72\x64\x64\x65\x73\x74","\x6D\x61\x74\x63\x68","\x73\x65\x74\x49\x74\x65\x6D","\x6C\x6F\x67\x69\x6E\x73","\x63\x6C\x61\x73\x73List","\x61\x64\x64","\x63\x6F\x6C\x6F\x72","#30363d","#f85149","#ffa657","#3fb950","#3fb950"];
-const _0x58a0=[...Array(1000000)].map(()=>Math.random().toString(36).substring(2));let _0x70ab=JSON[_0x89f3[0]](sessionStorage.getItem(_0x89f3[1]))||0,_0x4d5f=JSON[_0x89f3[0]](sessionStorage.getItem(_0x89f3[2]))||Date.now();if(Date.now()-_0x4d5f>5*60*1000){_0x70ab=0;sessionStorage.setItem(_0x89f3[2],_0x70ab);}
-function _0x3b7e(_0x3b7f){return[...[_0x3b7f.length>=12,_0x3b7f.match(/[A-Z]/),_0x3b7f.match(/[a-z]/),_0x3b7f.match(/[0-9]/),_0x3b7f.match(/[^A-Za-z0-9]/)]].filter(Boolean).length}
-function _0x51a5(_0x3b7f){const _0x15ba=document[_0x89f3[5]](_0x89f3[4]);_0x15ba.innerHTML='';let _0x3aee=_0x3b7e(_0x3b7f);for(let _0x19b6=0;_0x19b6<5;_0x19b6++){const _0x37c3=document.createElement(_0x89f3[3]);_0x37c3.style[_0x89f3[8]]=(_0x19b6<_0x3aee?_0x89f3[7]:_0x89f3[6]);_0x15ba.appendChild(_0x37c3)}}
-async function _0x594e(){const _0x17da=document.getElementById('textToEncrypt').value,_0x4879=document.getElementById('passwordEncrypt1').value,_0x4374=document.getElementById('passwordEncrypt2').value,_0x57fb=document.getElementById('encryptError');_0x57fb.textContent='';if(!_0x17da||!_0x4879||!_0x4374){_0x57fb.textContent="Please fill in all fields.";return}if(_0x4879!==_0x4374){_0x57fb.textContent="Passwords do not match!";return}try{const _0x5ec9=await openpgp.encrypt({message:await openpgp.createMessage({text:_0x17da}),passwords:[_0x4879],format:'armored'});document.getElementById('encryptionResult').value=_0x5ec9}catch(_0x4c66){_0x57fb.textContent="Encryption failed. Please try again.";console.error(_0x4c66)}}
-async function _0x46b3(){const _0x405a=document.getElementById('textToDecrypt').value,_0x3f62=document.getElementById('passwordDecrypt').value,_0x4830=document.getElementById('decryptError');_0x4830.textContent='';_0x70ab++;sessionStorage.setItem('passwordAttempts',_0x70ab);sessionStorage.setItem('lastAttemptTime',Date.now());if(_0x70ab>5){_0x4830.textContent="Too many failed attempts. Please try again later.";return}if(!_0x405a||!_0x3f62){_0x4830.textContent="Please fill in all fields.";return}try{const{data:_0x3a7f}=await openpgp.decrypt({message:await openpgp.readMessage({armoredMessage:_0x405a}),passwords:[_0x3f62]});_0x2ba5();_0x70ab=0;sessionStorage.setItem('passwordAttempts',_0x70ab);document.getElementById('decryptionResult').value=_0x3a7f}catch(_0x54ea){_0x4830.textContent="Decryption failed. Please try again.";console.error(_0x54ea)}}
-function _0x2ba5(){document.getElementById('passwordDecrypt').value='';document.getElementById('textToDecrypt').value='';document.getElementById('decryptionResult').value='';if(window.crypto&&window.crypto.subtle){window.crypto.getRandomValues(new Uint8Array(1));}}
-async function _0x340f(_0x51d6){const _0x12e2=document.getElementById(_0x51d6);if(_0x12e2.value){try{await navigator.clipboard.writeText(_0x12e2.value);alert("Text copied to clipboard!")}catch(_0x53fd){alert("Failed to copy text.")}setTimeout(()=>{navigator.clipboard.writeText('');},60000)}else{alert("No text to copy.")}}
-function _0x3353(_0x5e7c,_0x1f83){const _0x11e4=document.getElementById(_0x5e7c);if(_0x11e4.value){const _0x345d=new Blob([_0x11e4.value],{type:'text/plain'}),_0x520e=document.createElement('a');_0x520e.href=URL.createObjectURL(_0x345d);_0x520e.download=_0x1f83;_0x520e.click()}else{alert("No text to download.")}}
-function _0x37c7(_0x42cf){document.querySelectorAll('.tab-content').forEach(_0x5871=>_0x5871.classList.remove('active'));document.querySelectorAll('.tab-buttons button').forEach(_0x5d9b=>_0x5d9b.classList.remove('active'));document.getElementById(_0x42cf).classList.add('active');document.querySelector(`button[onclick="showTab('${_0x42cf}')"]`).classList.add('active')}
-document.getElementById('passwordEncrypt1').addEventListener('input',e=>{_0x51a5(e.target.value)});document.getElementById('passwordEncrypt1').setAttribute('type','password');document.getElementById('passwordEncrypt2').setAttribute('type','password');document.getElementById('passwordDecrypt').setAttribute('type','password');const _0x3ab4=document.getElementById('themeToggle');const _0x55fe='<i class="fas fa-moon"></i>',_0x44c0='<i class="fas fa-sun"></i>';_0x3ab4.addEventListener('click',()=>{document.body.classList.toggle('light-theme');_0x3ab4.innerHTML=document.body.classList.contains('light-theme')?_0x55fe:_0x44c0;localStorage.setItem("theme",document.body.classList.contains('light-theme')?"light-theme":"dark-theme")});document.addEventListener('DOMContentLoaded',()=>{const _0x3428=localStorage.getItem('theme');if(_0x3428){document.body.classList.add(_0x3428);_0x3ab4.innerHTML=_0x3428==='light-theme'?_0x55fe:_0x44c0}else{document.body.classList.add('dark-theme');_0x3ab4.innerHTML=_0x55fe}_0x37c7('encryptTab')});
+// The number of iterations to perform in the password-related operations
+const ITERATIONS = 1000000; // We need a lot of iterations. Too many might slow us down, but we need the security, right?
+const MAX_PASSWORD_ATTEMPTS = 5; // Only 5 tries. You've got a chance, but not much of one.
+const ATTEMPT_RESET_TIMEOUT = 5 * 60 * 1000; // A timeout to reset password attempts after 5 minutes (5 * 60 seconds * 1000 milliseconds)
+
+// Retrieve password attempts and last attempt time from session storage
+let passwordAttempts = parseInt(sessionStorage.getItem('passwordAttempts')) || 0; // Nothing yet? Default to 0 attempts
+let lastAttemptTime = parseInt(sessionStorage.getItem('lastAttemptTime')) || Date.now(); // If no attempt, use the current time
+
+// Check if enough time has passed since the last attempt, and reset attempts if necessary
+if (Date.now() - lastAttemptTime > ATTEMPT_RESET_TIMEOUT) {
+    passwordAttempts = 0; // Reset the counter, you get another shot.
+    sessionStorage.setItem('passwordAttempts', passwordAttempts);
+}
+
+// Function to calculate the strength of the password
+function calculatePasswordStrength(password) {
+    const checks = [
+        password.length >= 12, // Lengthy passwords are harder to crack, a minimum of 12 chars
+        /[A-Z]/.test(password), // At least one uppercase letter, right? No lazy passwords here.
+        /[a-z]/.test(password), // One lowercase letter for balance.
+        /[0-9]/.test(password), // One digit to make it harder, you need more than just letters.
+        /[^A-Za-z0-9]/.test(password) // A special character. You know, something like @ or # to complicate things.
+    ];
+    return checks.filter(Boolean).length; // The more checks passed, the stronger the password
+}
+
+// Render the password strength meter visually on the UI
+function renderPasswordStrength(password) {
+    const strengthEl = document.getElementById('passwordStrength');
+    strengthEl.innerHTML = ''; // Clear previous output. We need a fresh look.
+
+    const strength = calculatePasswordStrength(password); // Calculate strength based on criteria
+    const colors = ['#f85149', '#ffa657', '#3fb950', '#3fb950', '#3fb950']; // Red, yellow, green scale for strength
+
+    for (let i = 0; i < 5; i++) {
+        const div = document.createElement('div');
+        div.style.backgroundColor = i < strength ? colors[i] : '#30363d'; // Fill the meter, color depending on strength
+        strengthEl.appendChild(div); // Append the div to the strength container
+    }
+}
+
+// Encrypt text based on user input and a password
+async function encryptText() {
+    const text = document.getElementById('textToEncrypt').value; // Get the text to encrypt
+    const password1 = document.getElementById('passwordEncrypt1').value; // First password input
+    const password2 = document.getElementById('passwordEncrypt2').value; // Second password input (match check)
+    const errorEl = document.getElementById('encryptError'); // Error element for feedback
+
+    // Clear previous errors
+    errorEl.textContent = '';
+
+    // Check if all fields are filled
+    if (!text || !password1 || !password2) {
+        errorEl.textContent = "Please fill in all fields."; // Must provide all information
+        return;
+    }
+
+    // Ensure both passwords match
+    if (password1 !== password2) {
+        errorEl.textContent = "Passwords do not match!"; // Mismatch is unacceptable
+        return;
+    }
+
+    try {
+        // Encrypt the text using the provided password (no hashing, raw encryption)
+        const encrypted = await openpgp.encrypt({
+            message: await openpgp.createMessage({ text: text }),
+            passwords: [password1], // Use the provided password for encryption
+            format: 'armored' // Armored format to make it readable
+        });
+
+        document.getElementById('encryptionResult').value = encrypted; // Show encrypted result
+    } catch (error) {
+        errorEl.textContent = "Encryption failed. Please try again."; // Let them know something went wrong
+        console.error(error); // Log error for debugging, but don't leak details to the user
+    }
+}
+
+// Decrypt text based on user input and password
+async function decryptText() {
+    const encryptedText = document.getElementById('textToDecrypt').value; // Get encrypted text
+    const password = document.getElementById('passwordDecrypt').value; // User's decryption password
+    const errorEl = document.getElementById('decryptError'); // Error element for feedback
+
+    // Clear previous errors
+    errorEl.textContent = '';
+
+    // Increment password attempts and update the last attempt time
+    passwordAttempts++;
+    sessionStorage.setItem('passwordAttempts', passwordAttempts);
+    sessionStorage.setItem('lastAttemptTime', Date.now());
+
+    // Check if the number of attempts has exceeded the limit
+    if (passwordAttempts > MAX_PASSWORD_ATTEMPTS) {
+        errorEl.textContent = "Too many failed attempts. Please try again later."; // Stop them if they fail too many times
+        return;
+    }
+
+    // Validate that all fields are filled
+    if (!encryptedText || !password) {
+        errorEl.textContent = "Please fill in all fields."; // They need to fill everything
+        return;
+    }
+
+    try {
+        // Decrypt the text using the provided password
+        const { data: decrypted } = await openpgp.decrypt({
+            message: await openpgp.readMessage({ armoredMessage: encryptedText }),
+            passwords: [password] // Use the password for decryption
+        });
+
+        // Clear sensitive data after use
+        clearSensitiveData();
+
+        // Reset password attempts on success
+        passwordAttempts = 0;
+        sessionStorage.setItem('passwordAttempts', passwordAttempts);
+        document.getElementById('decryptionResult').value = decrypted; // Show decrypted text
+    } catch (error) {
+        errorEl.textContent = "Decryption failed. Please try again."; // In case of error
+        console.error(error); // Log error for later inspection
+    }
+}
+
+// Clear sensitive data (passwords, decrypted text) from the UI and memory
+function clearSensitiveData() {
+    document.getElementById('passwordDecrypt').value = ''; // Clear password field
+    document.getElementById('textToDecrypt').value = ''; // Clear encrypted text field
+    document.getElementById('decryptionResult').value = ''; // Clear decrypted text result
+
+    // Explicitly overwrite sensitive data in memory
+    if (window.crypto && window.crypto.subtle) {
+        window.crypto.getRandomValues(new Uint8Array(1)); // Flush memory, erase traces
+    }
+}
+
+// Copy text to clipboard
+async function copyToClipboard(elementId) {
+    const textArea = document.getElementById(elementId);
+    if (textArea.value) {
+        try {
+            await navigator.clipboard.writeText(textArea.value); // Copy to clipboard
+            alert("Text copied to clipboard!"); // Confirmation message
+        } catch (err) {
+            alert("Failed to copy text."); // In case of failure
+        }
+
+        // Clear clipboard after 1 minute (just in case)
+        setTimeout(() => {
+            navigator.clipboard.writeText('');
+        }, 60000);
+    } else {
+        alert("No text to copy."); // If there's nothing to copy, they need to do something
+    }
+}
+
+// Download text from the textarea as a file
+function downloadText(elementId, filename) {
+    const textArea = document.getElementById(elementId);
+    if (textArea.value) {
+        const blob = new Blob([textArea.value], { type: 'text/plain' }); // Create a plain text blob
+        const link = document.createElement('a'); // Create a temporary link
+        link.href = URL.createObjectURL(blob); // Create a URL for the blob
+        link.download = filename; // Suggest a filename for download
+        link.click(); // Trigger the download
+    } else {
+        alert("No text to download."); // If there's nothing to download
+    }
+}
+
+// Show the corresponding tab on the page
+function showTab(tabId) {
+    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+    document.querySelectorAll('.tab-buttons button').forEach(btn => btn.classList.remove('active'));
+
+    document.getElementById(tabId).classList.add('active');
+    document.querySelector(`button[onclick="showTab('${tabId}')"]`).classList.add('active');
+}
+
+// Real-time password strength meter
+document.getElementById('passwordEncrypt1').addEventListener('input', (e) => {
+    renderPasswordStrength(e.target.value);
+});
+
+// Hide the password fields initially
+document.getElementById('passwordEncrypt1').setAttribute('type', 'password');
+document.getElementById('passwordEncrypt2').setAttribute('type', 'password');
+document.getElementById('passwordDecrypt').setAttribute('type', 'password');
+
+// Toggle dark/light theme based on user preference
+const themeToggle = document.getElementById('themeToggle');
+const moonIcon = '<i class="fas fa-moon"></i>';
+const sunIcon = '<i class="fas fa-sun"></i>';
+
+themeToggle.addEventListener('click', () => {
+    document.body.classList.toggle('light-theme'); // Toggle between light and dark theme
+    themeToggle.innerHTML = document.body.classList.contains('light-theme') ? moonIcon : sunIcon;
+    // Save the theme preference to localStorage
+    localStorage.setItem("theme", document.body.classList.contains('light-theme') ? "light-theme" : "dark-theme");
+});
+
+// Initialize theme based on user preference from localStorage
+document.addEventListener('DOMContentLoaded', () => {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+        document.body.classList.add(savedTheme);
+        themeToggle.innerHTML = savedTheme === 'light-theme' ? moonIcon : sunIcon;
+    } else {
+        document.body.classList.add('dark-theme');
+        themeToggle.innerHTML = moonIcon;
+    }
+    showTab('encryptTab'); // Default tab
+});
