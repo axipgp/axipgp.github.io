@@ -29,12 +29,12 @@
             <h2>Encrypt Text</h2>
             <textarea id="textToEncrypt" rows="5" placeholder="Enter text to encrypt" maxlength="10000" aria-label="Text to encrypt"></textarea>
 
-            <label for="passwordEncrypt1">Password</label>
+            <label for="passwordEncrypt1" class="sr-only">Password</label>
             <input type="password" id="passwordEncrypt1" placeholder="Enter your password" 
                    aria-describedby="password-strength" autocomplete="new-password" required>
             <div id="passwordStrength" aria-label="Password strength indicator"></div>
 
-            <label for="passwordEncrypt2">Confirm Password</label>
+            <label for="passwordEncrypt2" class="sr-only">Confirm Password</label>
             <input type="password" id="passwordEncrypt2" placeholder="Confirm your password" 
                    autocomplete="new-password" required>
 
@@ -60,7 +60,7 @@
             <h2>Decrypt Text</h2>
             <textarea id="textToDecrypt" rows="5" placeholder="Enter encrypted text" maxlength="20000" aria-label="Encrypted text to decrypt"></textarea>
 
-            <label for="passwordDecrypt">Decryption Password</label>
+            <label for="passwordDecrypt" class="sr-only">Decryption Password</label>
             <input type="password" id="passwordDecrypt" placeholder="Enter your password" 
                    autocomplete="current-password" required>
 
@@ -90,6 +90,7 @@
         </div>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/openpgp/dist/openpgp.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/openpgp@5.10.1/dist/openpgp.min.js"></script>
     <script src="audit.js"></script>
 </body>
