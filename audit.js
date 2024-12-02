@@ -1,99 +1,36 @@
 // Configuration Constants
 const CONFIG = {
-    ITERATIONS: 1000000,
-    MAX_PASSWORD_ATTEMPTS: 5,
-    ATTEMPT_RESET_TIMEOUT: 5 * 60 * 1000,
     MAX_ENCRYPT_LENGTH: 10000,
     MAX_DECRYPT_LENGTH: 20000,
     CLIPBOARD_CLEAR_TIMEOUT: 60000,
 };
 
-// State Management for Password Attempts
-let passwordAttempts = 0;
-let lastAttemptTime = 0;
-
 // Initialize OpenPGP and Application
 document.addEventListener('DOMContentLoaded', async () => {
-    // Initialize session storage for password attempts
-    passwordAttempts = parseInt(sessionStorage.getItem('passwordAttempts')) || 0;
-    lastAttemptTime = parseInt(sessionStorage.getItem('lastAttemptTime')) || Date.now();
+    // Ensure OpenPGP is loaded
+    if (typeof openpgp === 'undefined') {
+        console.error('OpenPGP library not loaded');
+        alert('Encryption library failed to load. Please check your internet connection and reload the page.');
+        return;
+    }
 
-    // Initialize OpenPGP library
     try {
+        // Initialize OpenPGP library with default configuration
         await openpgp.init({
             workers: navigator.hardwareConcurrency || 2
         });
     } catch (error) {
         console.error('OpenPGP initialization failed:', error);
-        alert('Encryption library failed to load. Please refresh the page.');
+        alert('Encryption library initialization failed. Please refresh the page.');
+        return;
     }
-
-    // Check and reset password attempts if needed
-    checkPasswordAttemptsReset();
 
     // Theme setup
     setupThemeToggle();
 
     // Default to encrypt tab
     showTab('encryptTab');
-
-    // Password strength rendering
-    document.getElementById('passwordEncrypt1').addEventListener('input', (e) => {
-        renderPasswordStrength(e.target.value);
-    });
-
-    // Set password input types
-    ['passwordEncrypt1', 'passwordEncrypt2', 'passwordDecrypt'].forEach(id => {
-        const element = document.getElementById(id);
-        if (element) {
-            element.setAttribute('type', 'password');
-            element.setAttribute('autocomplete', id.includes('Encrypt') ? 'new-password' : 'current-password');
-        }
-    });
 });
-
-// Password Attempts Management
-function checkPasswordAttemptsReset() {
-    if (Date.now() - lastAttemptTime > CONFIG.ATTEMPT_RESET_TIMEOUT) {
-        resetPasswordAttempts();
-    }
-}
-
-function resetPasswordAttempts() {
-    passwordAttempts = 0;
-    sessionStorage.setItem('passwordAttempts', passwordAttempts);
-}
-
-// Password Strength Calculation
-function calculatePasswordStrength(password) {
-    const checks = [
-        password.length >= 12,       // Length check
-        /[A-Z]/.test(password),      // Uppercase letter
-        /[a-z]/.test(password),      // Lowercase letter
-        /[0-9]/.test(password),      // Number
-        /[^A-Za-z0-9]/.test(password), // Special character
-    ];
-    return checks.filter(Boolean).length;
-}
-
-function renderPasswordStrength(password) {
-    const strengthEl = document.getElementById('passwordStrength');
-    strengthEl.innerHTML = '';
-    const strength = calculatePasswordStrength(password);
-    const colors = [
-        '#f85149',    // Weak (red)
-        '#ffa657',    // Medium-weak (orange)
-        '#3fb950',    // Medium (green)
-        '#3fb950',    // Strong (green)
-        '#3fb950'     // Very strong (green)
-    ];
-
-    for (let i = 0; i < 5; i++) {
-        const div = document.createElement('div');
-        div.style.backgroundColor = i < strength ? colors[i] : '#30363d';
-        strengthEl.appendChild(div);
-    }
-}
 
 // Encryption Functions
 async function safeEncrypt(text, password) {
@@ -102,17 +39,12 @@ async function safeEncrypt(text, password) {
         const encrypted = await openpgp.encrypt({
             message: message,
             passwords: [password],
-            format: 'armored',
-            config: { 
-                minRSABits: 2048,
-                deflateLevel: 9,
-                s2kIterationLevel: 8 
-            }
+            format: 'armored'
         });
         return encrypted;
     } catch (error) {
         console.error('Encryption error:', error);
-        throw new Error('Encryption failed');
+        throw new Error('Encryption failed: ' + error.message);
     }
 }
 
@@ -126,7 +58,7 @@ async function safeDecrypt(encryptedText, password) {
         return decrypted;
     } catch (error) {
         console.error('Decryption error:', error);
-        throw new Error('Decryption failed');
+        throw new Error('Decryption failed: ' + error.message);
     }
 }
 
@@ -166,12 +98,6 @@ async function encryptText() {
         return;
     }
 
-    // Password strength check
-    if (calculatePasswordStrength(password1) < 3) {
-        errorEl.textContent = "Password is too weak. Use a stronger password.";
-        return;
-    }
-
     try {
         const encrypted = await safeEncrypt(text, password1);
         resultEl.value = encrypted;
@@ -181,7 +107,7 @@ async function encryptText() {
         password1El.value = '';
         password2El.value = '';
     } catch (error) {
-        errorEl.textContent = "Encryption failed. Please try again.";
+        errorEl.textContent = error.message || "Encryption failed. Please try again.";
         console.error(error);
     }
 }
@@ -198,17 +124,6 @@ async function decryptText() {
 
     const encryptedText = textEl.value.trim();
     const password = passwordEl.value;
-
-    // Attempt tracking
-    passwordAttempts++;
-    sessionStorage.setItem('passwordAttempts', passwordAttempts);
-    sessionStorage.setItem('lastAttemptTime', Date.now());
-
-    // Check max attempts
-    if (passwordAttempts > CONFIG.MAX_PASSWORD_ATTEMPTS) {
-        errorEl.textContent = "Too many failed attempts. Please try again later.";
-        return;
-    }
 
     // Validation checks
     if (!encryptedText) {
@@ -229,9 +144,6 @@ async function decryptText() {
     try {
         const decrypted = await safeDecrypt(encryptedText, password);
 
-        // Reset password attempts on successful decryption
-        resetPasswordAttempts();
-
         // Display decrypted text
         resultEl.value = decrypted;
 
@@ -239,7 +151,7 @@ async function decryptText() {
         textEl.value = '';
         passwordEl.value = '';
     } catch (error) {
-        errorEl.textContent = "Decryption failed. Please check your password and try again.";
+        errorEl.textContent = error.message || "Decryption failed. Please check your password and try again.";
         console.error(error);
     }
 }
@@ -330,4 +242,8 @@ function setupThemeToggle() {
         
         localStorage.setItem("theme", isLightTheme ? "light-theme" : "dark-theme");
     });
+}
+
+// Remove password strength rendering
+// Since hashing is removed, also remove related code
 }
