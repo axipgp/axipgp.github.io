@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AxiPGP</title>
+    <title>AxiPGP - Secure Text Encryption</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
+    <meta name="description" content="Secure text encryption and decryption tool using OpenPGP">
 </head>
 <body>
     <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme">
@@ -15,79 +16,81 @@
     <div class="container">
         <h1>AxiPGP</h1>
 
-        <div class="tab-buttons">
-            <button onclick="showTab('encryptTab')" class="active">
+        <div class="tab-buttons" role="tablist">
+            <button onclick="showTab('encryptTab')" class="active" role="tab" aria-selected="true" aria-controls="encryptTab">
                 <i class="fas fa-lock"></i> Encrypt
             </button>
-            <button onclick="showTab('decryptTab')">
+            <button onclick="showTab('decryptTab')" role="tab" aria-selected="false" aria-controls="decryptTab">
                 <i class="fas fa-unlock"></i> Decrypt
             </button>
         </div>
 
-        <div id="encryptTab" class="tab-content active">
+        <div id="encryptTab" class="tab-content active" role="tabpanel">
             <h2>Encrypt Text</h2>
-            <textarea id="textToEncrypt" rows="5" placeholder="Enter text to encrypt" maxlength="10000"></textarea>
+            <textarea id="textToEncrypt" rows="5" placeholder="Enter text to encrypt" maxlength="10000" aria-label="Text to encrypt"></textarea>
 
-            <input type="password" id="passwordEncrypt1" placeholder="Enter your password">
-            <div id="passwordStrength"></div>
+            <label for="passwordEncrypt1" class="sr-only">Password</label>
+            <input type="password" id="passwordEncrypt1" placeholder="Enter your password" 
+                   aria-describedby="password-strength" autocomplete="new-password" required>
+            <div id="passwordStrength" aria-label="Password strength indicator"></div>
 
-            <input type="password" id="passwordEncrypt2" placeholder="Confirm your password">
+            <label for="passwordEncrypt2" class="sr-only">Confirm Password</label>
+            <input type="password" id="passwordEncrypt2" placeholder="Confirm your password" 
+                   autocomplete="new-password" required>
 
-            <div id="encryptError" class="error"></div>
+            <div id="encryptError" class="error" role="alert"></div>
 
-            <button onclick="encryptText()" class="btn">
+            <button onclick="encryptText()" class="btn" aria-label="Encrypt text">
                 <i class="fas fa-lock"></i> Encrypt
             </button>
 
-            <textarea id="encryptionResult" rows="5" readonly placeholder="Encrypted result"></textarea>
+            <textarea id="encryptionResult" rows="5" readonly placeholder="Encrypted result" aria-label="Encrypted text"></textarea>
 
             <div class="btn-container">
-                <button onclick="copyToClipboard('encryptionResult')" class="btn">
+                <button onclick="copyToClipboard('encryptionResult')" class="btn" aria-label="Copy encrypted text">
                     <i class="fas fa-copy"></i> Copy Encrypted Text
                 </button>
-                <button onclick="downloadText('encryptionResult', 'ENcryptotexter.txt')" class="btn">
+                <button onclick="downloadText('encryptionResult', 'encrypted_text.txt')" class="btn" aria-label="Download encrypted text">
                     <i class="fas fa-download"></i> Download
                 </button>
             </div>
         </div>
 
-        <div id="decryptTab" class="tab-content">
+        <div id="decryptTab" class="tab-content" role="tabpanel" hidden>
             <h2>Decrypt Text</h2>
-            <textarea id="textToDecrypt" rows="5" placeholder="Enter encrypted text" maxlength="20000"></textarea>
+            <textarea id="textToDecrypt" rows="5" placeholder="Enter encrypted text" maxlength="20000" aria-label="Encrypted text to decrypt"></textarea>
 
-            <input type="password" id="passwordDecrypt" placeholder="Enter your password">
+            <label for="passwordDecrypt" class="sr-only">Decryption Password</label>
+            <input type="password" id="passwordDecrypt" placeholder="Enter your password" 
+                   autocomplete="current-password" required>
 
-            <div id="decryptError" class="error"></div>
+            <div id="decryptError" class="error" role="alert"></div>
 
-            <button onclick="decryptText()" class="btn">
+            <button onclick="decryptText()" class="btn" aria-label="Decrypt text">
                 <i class="fas fa-unlock"></i> Decrypt
             </button>
 
-            <textarea id="decryptionResult" rows="5" readonly placeholder="Decrypted result"></textarea>
+            <textarea id="decryptionResult" rows="5" readonly placeholder="Decrypted result" aria-label="Decrypted text"></textarea>
 
             <div class="btn-container">
-                <button onclick="copyToClipboard('decryptionResult')" class="btn">
+                <button onclick="copyToClipboard('decryptionResult')" class="btn" aria-label="Copy decrypted text">
                     <i class="fas fa-copy"></i> Copy Decrypted Text
                 </button>
-                <button onclick="downloadText('decryptionResult', 'DEcryptotexter.txt')" class="btn">
+                <button onclick="downloadText('decryptionResult', 'decrypted_text.txt')" class="btn" aria-label="Download decrypted text">
                     <i class="fas fa-download"></i> Download
                 </button>
             </div>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/openpgp/dist/openpgp.min.js"></script>
 
-    <script src="audit.js"></script>
-
-    <!-- Footer with copyright and open-source license -->
     <footer>
-        <div style="text-align: center; padding: 20px; font-size: 14px;">
-            <p>&copy; This project is licensed under the <a href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GNU</a>.
-            </p>
-            <p>
-                View the source code on <a href="https://github.com/yourusername/axidone" target="_blank">GitHub</a>.
-            </p>
+        <div class="footer-content">
+            <p>&copy; 2024 AxiPGP. Licensed under the <a href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank" rel="noopener noreferrer">GNU General Public License v3.0</a>.</p>
+            <p>View the source code on <a href="https://github.com/axipgp/axipgp.github.io" target="_blank" rel="noopener noreferrer">GitHub</a>.</p>
         </div>
     </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/openpgp/dist/openpgp.min.js"></script>
+    <script src="audit.js"></script>
 </body>
 </html>
